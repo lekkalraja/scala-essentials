@@ -22,7 +22,7 @@ object ValuesVariablesTypes extends App {
 
   //VAR's are mutable, can change or reassign values to variable (like variables)
   var score: Int = 32
-  score += 1
+  score += 1  // changing a variable is called as side effect
   println(score)
 
 
