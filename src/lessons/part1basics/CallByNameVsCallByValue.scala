@@ -24,7 +24,7 @@ object CallByNameVsCallByValue extends App {
 }
 
 /*
- TAKEWAY:
+ TAKEAWAY:
 
  Call  By Value :
      1. Value is computed before call
