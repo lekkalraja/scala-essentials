@@ -81,3 +81,8 @@ object Recursion extends  App {
   println(fibonacciTailRecursive(8))
 
 }
+
+/*
+  TAKEAWAY :
+      // WHEN YOU NEED LOOPS, USE _TAIL_RECURSION
+ */
