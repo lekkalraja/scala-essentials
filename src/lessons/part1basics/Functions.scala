@@ -1,5 +1,7 @@
 package lessons.part1basics
 
+import scala.annotation.tailrec
+
 object Functions extends  App {
 
   def aFunction(a: Int, b: Int): Int = a + b
@@ -16,8 +18,7 @@ object Functions extends  App {
   //Should specify return type for Recursive Functions
   def aRepeatedFunction(aString: String, times: Int) : String = {
     if (times == 1) aString
-    else
-      aString + " " + aRepeatedFunction(aString, times - 1)
+    else aString + " " + aRepeatedFunction(aString, times - 1)
   }
 
   println(aRepeatedFunction("Raja", 4))
@@ -51,7 +52,9 @@ object Functions extends  App {
   }
   println(fibnocacci(6))
 
+
   def isPrime(n: Int) : Boolean = {
+    @tailrec
     def isPrimeUntil(t: Int) : Boolean = {
       if (t <= 1) true
       else n % t != 0 && isPrimeUntil(t -1)
@@ -61,5 +64,6 @@ object Functions extends  App {
 
   println(isPrime(4))
   println(isPrime(41))
-  println(isPrime(37))
+  println(isPrime(23423))
+
 }
