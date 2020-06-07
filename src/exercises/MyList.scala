@@ -1,26 +1,26 @@
 package exercises
 
-abstract class MyList {
-  def head : Int
-  def tail : MyList
-  def add(element: Int) : MyList
+abstract class MyList[+A] {
+  def head : A
+  def tail : MyList[A]
+  def add[B >: A] (element: B) : MyList[B]
   def isEmpty : Boolean
   def printElements : String
-  override def toString : String = s"[ ${printElements} ]"
+  override def toString : String = s"[ $printElements ]"
 }
 
-object Empty extends MyList {
-  override def head: Int = throw new NoSuchElementException
-  override def tail: MyList = throw new NoSuchElementException
-  override def add(element: Int): MyList = new Cons(element, Empty)
+object Empty extends MyList[Nothing] {
+  override def head: Nothing = throw new NoSuchElementException
+  override def tail: MyList[Nothing] = throw new NoSuchElementException
+  override def add[B >: Nothing](element: B): MyList[B] = new Cons(element, Empty)
   override def isEmpty: Boolean = true
   override def printElements: String = s""
 }
 
-class Cons(h: Int, t: MyList) extends MyList {
-  override def head: Int = h
-  override def tail: MyList = t
-  override def add(element: Int): MyList = new Cons(element, this)
+class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
+  override def head: A = h
+  override def tail: MyList[A] = t
+  override def add[B >: A](element: B): MyList[B] = new Cons(element, this)
   override def isEmpty: Boolean = false
   override def printElements: String = {
     if (t.isEmpty) s"$h"
@@ -37,4 +37,13 @@ object ListTest extends App {
   println(list1.head)
   println(list1.tail)
   print(list1.toString)
+
+  val list3 = new Cons("Hello", Empty)
+  println(list3.head)
+  println(list3.tail)
+  println(list3.toString)
+  val list5 = list3.add("Scala").add("Java")
+  println(list5.head)
+  println(list5.tail)
+  print(list5.toString)
 }
