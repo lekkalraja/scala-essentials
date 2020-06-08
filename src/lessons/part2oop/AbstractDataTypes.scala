@@ -23,7 +23,7 @@ object AbstractDataTypes extends  App {
   val mary : Student = new Women("Psycho")
   println(mary.canLearn)
  // println(mary.creatureType)  // can't access Animal Members
-//  println(mary.eat)  // can't access Animal Members
+ // println(mary.eat)  // can't access Animal Members
 
   val aj: Animal = new Women("Good")
   println(aj.creatureType)
