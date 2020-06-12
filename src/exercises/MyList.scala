@@ -1,12 +1,24 @@
 package exercises
 
-abstract class MyList[+A] {
+abstract class MyList[+A]{
   def head : A
   def tail : MyList[A]
   def add[B >: A] (element: B) : MyList[B]
   def isEmpty : Boolean
   def printElements : String
+  def filter(predicate: MyPredicate[A]) : MyList[A]
+  def map[B](map: MyTransformer[A, B]) : MyList[B]
+  def flatMap[B](map: MyTransformer[A, MyList[B]]) : MyList[B]
+  def ++[B >: A](element: MyList[B]) : MyList[B]
   override def toString : String = s"[ $printElements ]"
+}
+
+trait MyPredicate[-T] {
+  def test(element : T) : Boolean
+}
+
+trait MyTransformer[-A, B] {
+  def transform(element : A) : B
 }
 
 object Empty extends MyList[Nothing] {
@@ -15,6 +27,12 @@ object Empty extends MyList[Nothing] {
   override def add[B >: Nothing](element: B): MyList[B] = new Cons(element, Empty)
   override def isEmpty: Boolean = true
   override def printElements: String = s""
+
+  override def filter(predicate: MyPredicate[Nothing]): Empty.type = Empty
+  override def map[B](map: MyTransformer[Nothing, B]): Empty.type = Empty
+  override def flatMap[B](map: MyTransformer[Nothing, MyList[B]]): Empty.type = Empty
+
+  override def ++[B >: Nothing](element: MyList[B]): MyList[B] = element
 }
 
 class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -26,24 +44,32 @@ class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
     if (t.isEmpty) s"$h"
     else s"$h  ${t.printElements}"
   }
+
+  override def filter(predicate: MyPredicate[A]): MyList[A] =
+    if (predicate.test(head)) new Cons(head, t.filter(predicate))
+    else t.filter(predicate)
+
+  override def map[B](mapper: MyTransformer[A, B]) = new Cons(mapper.transform(head), t.map(mapper))
+
+  override def flatMap[B](map: MyTransformer[A, MyList[B]]): MyList[B] = map.transform(head) ++ tail.flatMap(map)
+
+  override def ++[B >: A](element: MyList[B]): MyList[B] = new Cons[B](head, tail ++ element)
 }
 
 object ListTest extends App {
   val list = new Cons(1, Empty)
-  println(list.head)
-  println(list.tail)
-  println(list.toString)
-  val list1 = list.add(10).add(20)
-  println(list1.head)
-  println(list1.tail)
-  print(list1.toString)
+  val list1 = list.add(10).add(20).add(31).add(34)
+
+  println(list1.filter(_ % 2 != 0))
+  println(list1.map(_ * 2))
+
 
   val list3 = new Cons("Hello", Empty)
-  println(list3.head)
-  println(list3.tail)
-  println(list3.toString)
   val list5 = list3.add("Scala").add("Java")
-  println(list5.head)
-  println(list5.tail)
-  print(list5.toString)
+  println(list5.filter(_ == "Scala"))
+  println(list5.map(item =>s"$item G"))
+  println(list1 ++ list5)
+  println(list1.flatMap(new MyTransformer[Int, MyList[Int]] {
+    override def transform(element: Int): MyList[Int] = new Cons( element, new Cons(element + 1, Empty))
+  }))
 }
