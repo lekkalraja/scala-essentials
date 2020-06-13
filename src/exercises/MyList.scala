@@ -26,7 +26,7 @@ trait MyTransformer[-A, B] {
 case object Empty extends MyList[Nothing] {
   override def head: Nothing = throw new NoSuchElementException
   override def tail: MyList[Nothing] = throw new NoSuchElementException
-  override def add[B >: Nothing](element: B): MyList[B] = new Cons(element, Empty)
+  override def add[B >: Nothing](element: B): MyList[B] = Cons(element, Empty)
   override def isEmpty: Boolean = true
   override def printElements: String = s""
 
@@ -40,7 +40,7 @@ case object Empty extends MyList[Nothing] {
 case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
   override def head: A = h
   override def tail: MyList[A] = t
-  override def add[B >: A](element: B): MyList[B] = new Cons(element, this)
+  override def add[B >: A](element: B): MyList[B] = Cons(element, this)
   override def isEmpty: Boolean = false
   override def printElements: String = {
     if (t.isEmpty) s"$h"
@@ -48,10 +48,10 @@ case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
   }
 
   override def filter(predicate: MyPredicate[A]): MyList[A] =
-    if (predicate.test(head)) new Cons(head, t.filter(predicate))
+    if (predicate.test(head)) Cons(head, t.filter(predicate))
     else t.filter(predicate)
 
-  override def map[B](mapper: MyTransformer[A, B]) = new Cons(mapper.transform(head), t.map(mapper))
+  override def map[B](mapper: MyTransformer[A, B]) = Cons(mapper.transform(head), t.map(mapper))
 
   override def flatMap[B](map: MyTransformer[A, MyList[B]]): MyList[B] = map.transform(head) ++ tail.flatMap(map)
 
