@@ -5,30 +5,22 @@ object WhatsAFunction extends App{
   // DREAM : Use functions as first class elements
   // PROBLEM :: OOP Thinking
 
-  val doubler : Int => Int = new Function1[Int, Int] {
-    override def apply(element: Int): Int = element * 2
-  }
+  val doubler : Int => Int = _ * 2
 
   println(doubler(3))  // 6
 
   //function types => Function1.....Function22
 
-  val stringToIntConverter: String => Int = new Function1[String, Int] {
-    override def apply(v1: String): Int = v1.toInt
-  }
+  val stringToIntConverter: String => Int = _.toInt
 
   println(stringToIntConverter("3") + 3) // 6
 
-  val adder:  (Int, Int) => Int = new Function2[Int, Int, Int] {
-    override def apply(v1: Int, v2: Int): Int = v1 + v2
-  }
+  val adder:  (Int, Int) => Int = _ + _
 
   println(adder(10,20)) // 30
 
 
-  val concatenate: (String, String) => String = new Function2[String, String, String] {
-    override def apply(v1: String, v2: String): String = v1 + v2
-  }
+  val concatenate: (String, String) => String = _ + _
 
   println(concatenate("This is ", "SCALA Functional Programming"))
 
@@ -38,11 +30,7 @@ object WhatsAFunction extends App{
 
   // Higher Order Functions => Are functions which takes either function as a param or return function as a result
 
-  val superAdder : Int => (Int => Int) = new Function1[Int, Int => Int] {
-    override def apply(v1: Int): Int => Int = new Function[Int, Int] {
-      override def apply(v2: Int): Int = v1 + v2
-    }
-  }
+  val superAdder : Int => (Int => Int) = (v1: Int) =>(v2: Int) =>  v1 + v2
 
   val add3 = superAdder(10)
   println(add3(20)) // 30

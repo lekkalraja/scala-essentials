@@ -61,9 +61,7 @@ object ListTest extends App {
   println(list5.filter(_ == "Scala")) // [ Scala ]
   println(list5.map(item =>s"$item G"))  //[ Java G  Scala G  Hello G ]
   println(list1 ++ list5) // [ 34  31  20  10  1  Java  Scala  Hello ]
-  println(list1.flatMap(new Function1[Int, MyList[Int]] {
-    override def apply(element: Int): MyList[Int] = Cons( element, Cons(element + 1, Empty))
-  }))  //[ 34  35  31  32  20  21  10  11  1  2 ]
+  println(list1.flatMap((element: Int) => Cons( element, Cons(element + 1, Empty))))  //[ 34  35  31  32  20  21  10  11  1  2 ]
 
   // Use case classes
 
