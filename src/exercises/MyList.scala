@@ -8,19 +8,11 @@ abstract class MyList[+A]{
   def add[B >: A] (element: B) : MyList[B]
   def isEmpty : Boolean
   def printElements : String
-  def filter(predicate: MyPredicate[A]) : MyList[A]
-  def map[B](map: MyTransformer[A, B]) : MyList[B]
-  def flatMap[B](map: MyTransformer[A, MyList[B]]) : MyList[B]
+  def filter(predicate: A => Boolean) : MyList[A]
+  def map[B](map: A => B) : MyList[B]
+  def flatMap[B](map: A => MyList[B]) : MyList[B]
   def ++[B >: A](element: MyList[B]) : MyList[B]
   override def toString : String = s"[ $printElements ]"
-}
-
-trait MyPredicate[-T] {
-  def test(element : T) : Boolean
-}
-
-trait MyTransformer[-A, B] {
-  def transform(element : A) : B
 }
 
 case object Empty extends MyList[Nothing] {
@@ -30,9 +22,9 @@ case object Empty extends MyList[Nothing] {
   override def isEmpty: Boolean = true
   override def printElements: String = s""
 
-  override def filter(predicate: MyPredicate[Nothing]): Empty.type = Empty
-  override def map[B](map: MyTransformer[Nothing, B]): Empty.type = Empty
-  override def flatMap[B](map: MyTransformer[Nothing, MyList[B]]): Empty.type = Empty
+  override def filter(predicate: Nothing => Boolean): Empty.type = Empty
+  override def map[B](map: Nothing => B): Empty.type = Empty
+  override def flatMap[B](map: Nothing =>  MyList[B]): Empty.type = Empty
 
   override def ++[B >: Nothing](element: MyList[B]): MyList[B] = element
 }
@@ -47,13 +39,12 @@ case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
     else s"$h  ${t.printElements}"
   }
 
-  override def filter(predicate: MyPredicate[A]): MyList[A] =
-    if (predicate.test(head)) Cons(head, t.filter(predicate))
+  override def filter(predicate: A => Boolean): MyList[A] =
+    if (predicate.apply(head)) Cons(head, t.filter(predicate))
     else t.filter(predicate)
 
-  override def map[B](mapper: MyTransformer[A, B]) = Cons(mapper.transform(head), t.map(mapper))
-
-  override def flatMap[B](map: MyTransformer[A, MyList[B]]): MyList[B] = map.transform(head) ++ tail.flatMap(map)
+  override def map[B](mapper: A => B) = Cons(mapper(head), t.map(mapper))
+  override def flatMap[B](map: A => MyList[B]): MyList[B] = map(head) ++ tail.flatMap(map)
 
   override def ++[B >: A](element: MyList[B]): MyList[B] = new Cons[B](head, tail ++ element)
 }
@@ -70,8 +61,8 @@ object ListTest extends App {
   println(list5.filter(_ == "Scala")) // [ Scala ]
   println(list5.map(item =>s"$item G"))  //[ Java G  Scala G  Hello G ]
   println(list1 ++ list5) // [ 34  31  20  10  1  Java  Scala  Hello ]
-  println(list1.flatMap(new MyTransformer[Int, MyList[Int]] {
-    override def transform(element: Int): MyList[Int] = Cons( element, Cons(element + 1, Empty))
+  println(list1.flatMap(new Function1[Int, MyList[Int]] {
+    override def apply(element: Int): MyList[Int] = Cons( element, Cons(element + 1, Empty))
   }))  //[ 34  35  31  32  20  21  10  11  1  2 ]
 
   // Use case classes
