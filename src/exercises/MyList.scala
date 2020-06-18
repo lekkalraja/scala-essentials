@@ -12,6 +12,11 @@ abstract class MyList[+A]{
   def map[B](map: A => B) : MyList[B]
   def flatMap[B](map: A => MyList[B]) : MyList[B]
   def ++[B >: A](element: MyList[B]) : MyList[B]
+
+  // HOFS
+  def foreach(consumer: A => Unit): Unit
+  def sort(compare: (A, A) => Int) : MyList[A]
+
   override def toString : String = s"[ $printElements ]"
 }
 
@@ -21,12 +26,16 @@ case object Empty extends MyList[Nothing] {
   override def add[B >: Nothing](element: B): MyList[B] = Cons(element, Empty)
   override def isEmpty: Boolean = true
   override def printElements: String = s""
+  override def ++[B >: Nothing](element: MyList[B]): MyList[B] = element
 
+  // HOFS
   override def filter(predicate: Nothing => Boolean): Empty.type = Empty
   override def map[B](map: Nothing => B): Empty.type = Empty
   override def flatMap[B](map: Nothing =>  MyList[B]): Empty.type = Empty
 
-  override def ++[B >: Nothing](element: MyList[B]): MyList[B] = element
+  override def foreach(consumer: Nothing => Unit): Unit = ()
+
+  override def sort(compare: (Nothing, Nothing) => Int): MyList[Nothing] = Empty
 }
 
 case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -39,14 +48,22 @@ case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
     else s"$h  ${t.printElements}"
   }
 
+
+  override def ++[B >: A](element: MyList[B]): MyList[B] = new Cons[B](head, tail ++ element)
+
+  //HOFS
+  override def map[B](mapper: A => B) = Cons(mapper(head), t.map(mapper))
+  override def flatMap[B](map: A => MyList[B]): MyList[B] = map(head) ++ tail.flatMap(map)
   override def filter(predicate: A => Boolean): MyList[A] =
     if (predicate.apply(head)) Cons(head, t.filter(predicate))
     else t.filter(predicate)
 
-  override def map[B](mapper: A => B) = Cons(mapper(head), t.map(mapper))
-  override def flatMap[B](map: A => MyList[B]): MyList[B] = map(head) ++ tail.flatMap(map)
+  override def foreach(consumer: A => Unit): Unit = {
+    consumer(head)
+    t.foreach(consumer)
+  }
 
-  override def ++[B >: A](element: MyList[B]): MyList[B] = new Cons[B](head, tail ++ element)
+  override def sort(compare: (A, A) => Int): MyList[A] = ???
 }
 
 object ListTest extends App {
@@ -67,4 +84,12 @@ object ListTest extends App {
 
   val persons = Cons(Person("Raja", 26), Empty).add(Person("Sekhar", 25)).add(Person("Mary", 27))
   println(persons) // [ Person(Mary,27)  Person(Sekhar,25)  Person(Raja,26) ]
+
+  persons.foreach(person => println(person.name))
+  persons.foreach(println)
+
+  println(for {
+    n <- list1
+    s <- list5
+  } yield s"$n  $s")
 }
