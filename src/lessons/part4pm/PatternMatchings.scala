@@ -1,4 +1,4 @@
-package lessons.part3fp
+package lessons.part4pm
 
 import scala.annotation.tailrec
 import scala.util.Random
