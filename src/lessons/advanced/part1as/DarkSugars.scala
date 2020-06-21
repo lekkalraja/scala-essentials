@@ -104,6 +104,4 @@ object DarkSugars extends App {
   println(mutableContainer.member) // 0
   mutableContainer.member = 49 // REWRITTEN AS mutableContainer.member_=(49)
   println(mutableContainer.member) // 49
-
-
 }
