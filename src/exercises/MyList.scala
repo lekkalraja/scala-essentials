@@ -1,6 +1,6 @@
 package exercises
 
-import lessons.part2oop.CaseClasses.Person
+import lessons.beginners.part2oop.CaseClasses.Person
 
 abstract class MyList[+A]{
   def head : A
