@@ -1,7 +1,5 @@
 package lessons.advanced.part1as
 
-import lessons.advanced.part1as.AdvancedPatternMatching.MySet
-
 object AdvancedPatternMatching extends App {
 
   val list = List(1)
@@ -158,14 +156,14 @@ object AdvancedPatternMatching extends App {
   // implement isEmpty: Boolean, get: something
 
   abstract class Wrapper[T] {
-    def isEmpty: Boolean = ???
-    def get : T = ???
+    def isEmpty: Boolean
+    def get : T
   }
 
   object EmployeeWrapper {
     def unapply(arg: Employee): Wrapper[String] = new Wrapper[String] {
-      override def isEmpty = false
-      override def get = arg.name
+      override def isEmpty: Boolean = false
+      override def get: String = arg.name
     }
   }
 
