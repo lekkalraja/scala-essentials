@@ -134,6 +134,8 @@ object AdvancedPatternMatching extends App {
     def tail: MySet[A] = ???
   }
 
+  Set(1,2,3)
+
   case object Empty extends MySet[Nothing]
   case class Cons[+A](override val head: A, override  val tail: MySet[A]) extends MySet[A]
 
