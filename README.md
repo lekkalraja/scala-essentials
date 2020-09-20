@@ -1,1 +1,1 @@
-# raja-rocks-scala
+# scala-essenitals
